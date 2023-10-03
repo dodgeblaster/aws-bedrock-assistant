@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            .options button {
+                background-color: rgb(229, 229, 233);
+                color: #222;
+                border-radius: 6px;
+                margin-bottom: 4px;
+                padding: 10px 20px;
+                text-align: left;
+                font-size: 12px;
+            }
+
+            textarea:focus {
+                outline: none;
+            }
+        </style>
+    </head>
+    <body class="flex justify-center  h-screen items-center bg-gray-100 py-20">
+        
+            <div class="flex-1 p-6">
+                <h1 class="text-2xl font-semibold mb-4">Write Code</h1>
+                <div
+                    class="bg-white p-6 rounded-lg shadow-md"
+                    style="width: 627px;"
+                >
+                    <textarea
+                        id="inputText"
+                        class="w-full p-2 border rounded-md border-none"
+                       
+                     
+                        placeholder="Enter your text here..."
+                    ></textarea>
+                </div>
+                <button
+                    id="generate"
+                    class="bg-zinc-800 hover:bg-zinc-900 text-white py-2 px-4 rounded-md mt-4"
+                >
+                    Generate
+                </button>
+            </div>
+            <div class="monaco bg-white p-6 shadow-md h-screen flex-1" style="background-color: rgb(30,30,30)"></div>
+        
+        
+
+        <script type="module">
+            import * as monaco from 'https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/+esm';
+
+
+            monaco.editor.defineTheme('default', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      {
+        token: "identifier",
+        foreground: "9CDCFE"
+      },
+      {
+        token: "identifier.function",
+        foreground: "DCDCAA"
+      },
+      {
+        token: "type",
+        foreground: "1AAFB0"
+      }
+    ],
+    colors: {}
+    });
+    monaco.editor.setTheme('default')
+
+            const editor = monaco.editor.create(document.querySelector('.monaco'), {
+                language: 'javascript',
+               
+            });
+            
+
+         
+            const wait = () =>
+                new Promise((r) =>
+                    setTimeout(() => {
+                        r()
+                    }, 5)
+                )
+            const button = document.getElementById('generate')
+            const input = document.getElementById('inputText')
+            const result = document.getElementById('result')
+
+            let structure = ''
+            function ask(input) {
+                //result.textContent = 'Generating...'
+
+                editor.getModel().setValue('Generating...')
+
+                const prompt =
+                    `I am an software engineer who wants to implement the following idea in javascript
+
+${input}
+
+Only respond with example code.
+
+
+`
+
+                const raw = fetch('http://127.0.0.1:3001/api/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: prompt
+                    })
+                })
+                    .then((x) => x.json())
+                    .then(async (x) => {
+                         //result.textContent = ''
+                        const r = x.result
+
+                        // let count = 0
+                        // let length = r.length
+                        // while (count <= length) {
+                        //     await wait()
+                        //     result.textContent += r[count]
+                        //     count++
+                        // }
+                        // result.innerHTML = r
+                        editor.getModel().setValue(r.split('```js')[1].split('```')[0])
+                        //button.textContent = 'Generate'
+                    })
+            }
+
+         
+            document.getElementById('generate').addEventListener('click', (x) => {
+                const text = x.target.textContent.trim()
+
+                structure = text + ': {original_text}'
+
+
+                ask(input.value)
+            })
+
+            // document.querySelectorAll('.options button').forEach(x => x.addEventListener('click', (x) => {
+            //     const text = x.target.textContent.trim()
+
+            //     structure = text + ': {original_text}'
+
+
+            //     ask(input.value)
+            // }))
+        </script>
+ 
+</html>
