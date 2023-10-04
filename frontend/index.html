@@ -35,14 +35,10 @@
                         cols="50"
                         rows="10"
                         placeholder="Enter your text here..."
-                    >Writing code that is good enough quickly is better than spending lots of time writing the perfect code</textarea>
+                    >
+Writing code that is good enough quickly is better than spending lots of time writing the perfect code</textarea
+                    >
                 </div>
-                <!-- <button
-                    id="generate"
-                    class="bg-zinc-800 hover:bg-zinc-900 text-white py-2 px-4 rounded-md mt-4"
-                >
-                    Generate
-                </button> -->
             </div>
             <div
                 class="bg-white p-6 rounded-lg shadow-md ml-2"
@@ -56,11 +52,22 @@
                 <h1>Simplify</h1>
                 <button>Rewrite the following sentence in simpler terms</button>
                 <button>Simplify this sentence for a general audience</button>
-                <button>Explain this complex sentence in everyday language</button>
-                <button>Break down this complicated idea into a more straightforward sentence</button>
-                <button> Make this sentence easier to understand for a non-expert</button>
-                <button>Translate this technical sentence into plain English</button>
-                <button>Rephrase this sentence to be more reader-friendly</button>
+                <button>
+                    Explain this complex sentence in everyday language
+                </button>
+                <button>
+                    Break down this complicated idea into a more straightforward
+                    sentence
+                </button>
+                <button>
+                    Make this sentence easier to understand for a non-expert
+                </button>
+                <button>
+                    Translate this technical sentence into plain English
+                </button>
+                <button>
+                    Rephrase this sentence to be more reader-friendly
+                </button>
             </div>
             <div class="flex flex-col flex-1 mx-2">
                 <h1>Readability</h1>
@@ -69,56 +76,84 @@
                 <button>Rework this sentence to make it more engaging</button>
                 <button>Revise this sentence for improved clarity</button>
                 <button>Rearrange this sentence to enhance coherence</button>
-                <button>Reframe this sentence to make it easier to follow</button>
+                <button>
+                    Reframe this sentence to make it easier to follow
+                </button>
                 <button>Smooth out the transitions in this paragraph:</button>
             </div>
             <div class="flex flex-col flex-1 mx-2">
                 <h1>Adapt Length</h1>
                 <button>Summarize the following paragraph</button>
                 <button>Expand on this idea in more detail</button>
-                <button>Shorten this text while maintaining its core message</button>
-                <button>Elaborate on this sentence to provide more context</button>
+                <button>
+                    Shorten this text while maintaining its core message
+                </button>
+                <button>
+                    Elaborate on this sentence to provide more context
+                </button>
                 <button>Reduce this paragraph to its key points</button>
-                <button>Provide a more in-depth explanation for this statement</button>
+                <button>
+                    Provide a more in-depth explanation for this statement
+                </button>
                 <button>Write a concise version of this passage</button>
             </div>
-            </div>
-         <div class="options flex flex-wrap bg-gray-100 px-20 py-6">
+        </div>
+        <div class="options flex flex-wrap bg-gray-100 px-20 py-6">
             <div class="flex flex-col flex-1 mx-2">
                 <h1>Enhance Creativity</h1>
                 <button>Add a metaphor to this sentence</button>
                 <button>Rewrite this sentence with a creative twist</button>
                 <button>Incorporate a simile into the following text</button>
                 <button>Transform this sentence using a vivid analogy</button>
-                <button>Describe this concept using an imaginative comparison</button>
-                <button>Create a more engaging version of this sentence with a creative expression</button>
-                <button>Inject some life into this paragraph with a colorful idiom</button>
+                <button>
+                    Describe this concept using an imaginative comparison
+                </button>
+                <button>
+                    Create a more engaging version of this sentence with a
+                    creative expression
+                </button>
+                <button>
+                    Inject some life into this paragraph with a colorful idiom
+                </button>
             </div>
 
-             <div class="flex flex-col flex-1 mx-2">
+            <div class="flex flex-col flex-1 mx-2">
                 <h1>Sound like</h1>
-                <button>Rewrite the following text in the style of Ernest Hemingway</button>
-                <button>Rewrite the following text in the style of George Orwell</button>
-                <button>Rewrite the following text in the style of Virginia Woolf</button>
-                <button>Rewrite the following text in the style of David Foster Wallace</button>
-                <button>Rewrite the following text in the style of Martin Fowler from Thought Works</button>
-                <button>Rewrite the following text in the style of programmer Bob C. Martin</button>
-                <button>Rewrite the following text in the style of Amazons CTO Werner Vogels</button>
-                <button>Rewrite the following text informed by Amazons Leadership Principles</button>
+                <button>
+                    Rewrite the following text in the style of Ernest Hemingway
+                </button>
+                <button>
+                    Rewrite the following text in the style of George Orwell
+                </button>
+                <button>
+                    Rewrite the following text in the style of Virginia Woolf
+                </button>
+                <button>
+                    Rewrite the following text in the style of David Foster
+                    Wallace
+                </button>
+                <button>
+                    Rewrite the following text in the style of Martin Fowler
+                    from Thought Works
+                </button>
+                <button>
+                    Rewrite the following text in the style of programmer Bob C.
+                    Martin
+                </button>
+                <button>
+                    Rewrite the following text in the style of Amazons CTO
+                    Werner Vogels
+                </button>
+                <button>
+                    Rewrite the following text informed by Amazons Leadership
+                    Principles
+                </button>
             </div>
 
-             <div class="flex flex-col flex-1 mx-2">
-               
-            </div>
-                
+            <div class="flex flex-col flex-1 mx-2"></div>
         </div>
 
         <script>
-            let options = {
-                a: 'Rewrite the following text in simpler terms: {original_text}',
-                b: 'Rewrite the following text in simpler terms in the style of Ernest Hemingway: {original_text}'
-            }
-
             const wait = () =>
                 new Promise((r) =>
                     setTimeout(() => {
@@ -129,7 +164,7 @@
             const input = document.getElementById('inputText')
             const result = document.getElementById('result')
 
-            let structure = options.b
+            let structure = ''
             function ask(input) {
                 result.textContent = 'Generating...'
 
@@ -150,7 +185,7 @@ Respond only with answer. Do not explain the text in any way.`
                 })
                     .then((x) => x.json())
                     .then(async (x) => {
-                         result.textContent = ''
+                        result.textContent = ''
                         const r = x.result
 
                         let count = 0
@@ -165,16 +200,15 @@ Respond only with answer. Do not explain the text in any way.`
                     })
             }
 
-         
+            document.querySelectorAll('.options button').forEach((x) =>
+                x.addEventListener('click', (x) => {
+                    const text = x.target.textContent.trim()
 
-            document.querySelectorAll('.options button').forEach(x => x.addEventListener('click', (x) => {
-                const text = x.target.textContent.trim()
+                    structure = text + ': {original_text}'
 
-                structure = text + ': {original_text}'
-
-
-                ask(input.value)
-            }))
+                    ask(input.value)
+                })
+            )
         </script>
- 
+    </body>
 </html>

@@ -5,6 +5,7 @@ import {
 
 const client = new BedrockRuntimeClient({ region: 'us-east-1' })
 
+const isFast = true
 export async function ai({
     prompt,
     temperature = 1,
@@ -22,7 +23,7 @@ export async function ai({
     }
 
     const params = {
-        modelId: 'anthropic.claude-v2',
+        modelId: isFast ? 'anthropic.claude-instant-v1' : 'anthropic.claude-v2',
         contentType: 'application/json',
         accept: '*/*',
         body: JSON.stringify(promptParams)
