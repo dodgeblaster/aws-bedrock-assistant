@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            .options button {
+                background-color: rgb(229, 229, 233);
+                color: #222;
+                border-radius: 6px;
+                margin-bottom: 4px;
+                padding: 10px 20px;
+                text-align: left;
+                font-size: 12px;
+            }
+
+            textarea:focus {
+                outline: none;
+            }
+        </style>
+    </head>
+    <body class="flex justify-center h-screen items-center bg-gray-100 py-20">
+        <div class="flex justify-center items-center bg-gray-100 py-20">
+            <div>
+                <h1 class="text-2xl font-semibold mb-4">Daily Assistant</h1>
+                <div
+                    class="bg-white p-6 rounded-lg shadow-md"
+                    style="width: 627px; height: 414px"
+                >
+                    <textarea
+                        id="inputText"
+                        class="w-full p-2 border rounded-md border-none"
+                        cols="50"
+                        rows="10"
+                        placeholder="Enter your text here..."
+                    >
+Should I drive right now?</textarea
+                    >
+                </div>
+                <button
+                    id="generate"
+                    class="bg-zinc-800 hover:bg-zinc-900 text-white py-2 px-4 rounded-md mt-4"
+                >
+                    Ask
+                </button>
+            </div>
+            <div
+                class="bg-white p-6 rounded-lg shadow-md ml-2"
+                style="width: 627px; height: 414px; margin-top: -10px"
+            >
+                <div id="result" class="text-sky-900"></div>
+            </div>
+        </div>
+
+        <script type="module">
+            const wait = () =>
+                new Promise((r) =>
+                    setTimeout(() => {
+                        r()
+                    }, 5)
+                )
+            const button = document.getElementById('generate')
+            const input = document.getElementById('inputText')
+            const result = document.getElementById('result')
+
+            let structure = ''
+            function ask(input) {
+                button.textContent = 'Asking...'
+                const prompt = input
+
+                const raw = fetch('http://127.0.0.1:3001/api/functioncalling', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: prompt
+                    })
+                })
+                    .then((x) => x.json())
+                    .then(async (x) => {
+                        result.textContent = ''
+                        const r = x.result
+
+                        let count = 0
+                        let length = r.length
+                        while (count <= length) {
+                            await wait()
+                            result.textContent += r[count]
+                            count++
+                        }
+                        result.innerHTML = r
+                        button.textContent = 'Ask'
+                    })
+            }
+
+            document
+                .getElementById('generate')
+                .addEventListener('click', (x) => {
+                    const text = x.target.textContent.trim()
+
+                    structure = text + ': {original_text}'
+
+                    ask(input.value)
+                })
+        </script>
+    </body>
+</html>
