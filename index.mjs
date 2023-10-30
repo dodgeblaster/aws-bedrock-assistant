@@ -12,7 +12,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 app.get('/', (_, res) => {
-    const html = fs.readFileSync('./frontend/index.html', {
+    const html = fs.readFileSync('./frontend/general.html', {
         encoding: 'utf-8'
     })
     res.send(html)
@@ -32,14 +32,33 @@ app.get('/assistant', (_, res) => {
     res.send(html)
 })
 
+let session = []
 app.post('/api/ask', async (req, res) => {
     const data = req.body.data
-    const prompt = `Human: ${data}
+    if (data === 'clear') { 
+        session = []
+        res.json({
+            result: ''
+        })
+        return
+    }
+
+    const before = session.length > 2 
+        ? session.slice(-3) 
+        : session.slice(0);
+    
+    
+    const prompt = before.join('') + `
+
+Human: ${data}
+
+
 Assistant:`
     const result = await ai({
         prompt
     })
 
+    session = session + prompt + result.completion 
     res.json({
         result: result.completion
     })

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script
+    type="module"
+    src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"
+  ></script>
+        <style>
+            .options button {
+                background-color: rgb(229, 229, 233);
+                color: #222;
+                border-radius: 6px;
+                margin-bottom: 4px;
+                padding: 10px 20px;
+                text-align: left;
+                font-size: 12px;
+            }
+
+            textarea:focus {
+                outline: none;
+            }
+        </style>
+    </head>
+    <body class="flex justify-center h-screen items-center bg-gray-100 py-20">
+
+        <div class="fixed top-2 left-2 bg-emerald-400 px-2 py-1 rounded-md">
+             <p class="text-xs font-light text-white font-semibold">AI Assistant</p>
+        </div>
+
+        <div class="flex flex-col bg-gray-100 py-2" style="width: 90%; max-width: 800px; height: 100vh;">
+                <div class="flex my-4" id="session-state"></div>
+                <div
+                    class="bg-white p-6 rounded-lg shadow-md flex-1 overflow-y-scroll"
+                    style="margin-bottom: 70px;"
+                >
+                    <div id="result2" class="text-sky-900">
+                        <zero-md>
+                            <script type="text/markdown" id="result">
+                            </script>
+                        </zero-md>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col bg-gray-100 fixed bottom-2 w-full">
+         
+                <div
+                style="width: 90%; max-width: 800px;"
+                    class="bg-white rounded-lg shadow-lg flex mt-2 overflow-hidden mx-auto"
+                    style=" height: 60px"
+                >
+                    <input
+                        autofocus
+                        id="inputText"
+                        class="w-full p-2 border rounded-md border-none outline-none p-4"
+                        cols="50"
+                        rows="10"
+                        placeholder="Enter your text here..."
+                    ></input>
+                    <button
+                    id="generate"
+                    class="bg-zinc-800 hover:bg-zinc-900 text-white py-2 px-10"
+                >
+                    Ask
+                </button>
+                </div>
+        </div>
+        <script type="module">
+            let historyState = -1
+            let theHistory = []
+            let chatInstance = ''
+            const wait = () =>
+                new Promise((r) =>
+                    setTimeout(() => {
+                        r()
+                    }, 1)
+                )
+            const button = document.getElementById('generate')
+            const input = document.getElementById('inputText')
+            const result = document.getElementById('result')
+            const sessionState = document.getElementById('session-state')
+
+
+            function setSessionStateIndicator() {
+                const item = `<div class="h-2 w-2 mr-2 rounded-full bg-zinc-300"></div>`
+                const selected = `<div class="h-2 w-2 mr-2 rounded-full bg-emerald-400"></div>`
+                sessionState.innerHTML = theHistory.map((_, i) => {
+                    return i === historyState ? selected : item
+                }).join('')
+            }
+
+            let structure = ''
+            function ask(input) {
+
+                /**
+                 * Controls
+                 */
+                if (input === '<') {
+                    if (historyState <= 0) {
+                        document.getElementById('inputText').value = ''
+                        setSessionStateIndicator()
+                        return
+                    }
+                    historyState--
+                    result.innerHTML = theHistory[historyState]
+                    document.getElementById('inputText').value = ''
+                    setSessionStateIndicator()
+                    return
+                }
+
+                if (input === '>') {
+                    if (historyState >= theHistory.length - 1) {
+                        document.getElementById('inputText').value = ''
+                        setSessionStateIndicator()
+                        return
+                    }
+                    historyState++
+                    result.innerHTML = theHistory[historyState]
+                    document.getElementById('inputText').value = ''
+                    setSessionStateIndicator()
+                    return
+                }
+
+                 /**
+                  * Prompt
+                  */
+                button.textContent = 'Asking...'
+                const prompt = input
+
+                chatInstance = ''
+                chatInstance = '**Me**: ' + prompt + `\n
+**Assistant**: `
+                result.textContent = chatInstance
+                document
+                    .getElementById('inputText').value = ''
+                const raw = fetch('http://127.0.0.1:3001/api/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: prompt,
+                    })
+                })
+                    .then((x) => x.json())
+                    .then(async (x) => {
+
+                        if (x.result === '') {
+                            historyState = -1
+                            theHistory = []
+                            result.textContent = ''
+                            button.textContent = 'Ask'
+                            setSessionStateIndicator()
+                            return
+                        }
+
+                        const r = x.result
+                        let count = 0
+                        let length = r.length
+                        while (count <= length) {
+                            await wait()
+                            result.textContent += r[count]
+                            count++
+                        }
+                        button.textContent = 'Ask'
+                        theHistory.push(result.textContent)
+                        historyState++
+                        setSessionStateIndicator()
+                    })
+            }
+
+            document
+                .getElementById('generate')
+                .addEventListener('click', (x) => {
+                    const text = x.target.textContent.trim()
+                    structure = text + ': {original_text}'
+                    ask(input.value)
+                })
+
+            document
+                .getElementById('inputText')
+                .addEventListener("keypress", function (event) { 
+                    if (event.charCode == 13) {
+                        const text = document
+                            .getElementById('inputText')
+                            .textContent.trim()
+                        structure = text + ': {original_text}'
+                        ask(input.value)
+                    } 
+                });
+        </script>
+    </body>
+</html>

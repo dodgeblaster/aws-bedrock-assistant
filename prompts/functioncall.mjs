@@ -21,7 +21,7 @@ function getSchedule(hour) {
     if (hour < 13) {
         return 'lunch'
     }
-    if (hour < 16) {
+    if (hour < 23) {
         return 'important meeting'
     }
 }
@@ -33,7 +33,7 @@ function getTraffic(hour) {
     if (hour < 13) {
         return 'traffic is good'
     }
-    if (hour < 16) {
+    if (hour < 23) {
         return 'traffic is bad'
     }
 }
@@ -171,6 +171,7 @@ export async function functioncalling(question) {
         tries++
     }
 
+    console.log(fullPrompt)
     if (fullPrompt.endsWith('</answer>')) {
         const split = fullPrompt.split('<answer>')
         return split[split.length - 1].split('</answer>')[0]
